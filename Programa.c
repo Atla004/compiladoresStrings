@@ -1,8 +1,84 @@
+
+//<ABRIR> juan = 3 == 3 <CERRAR> valid
+//<ABRIR> juan=3==3 <CERRAR> valid
+//<ABRIR>juan=3==3<CERRAR> invalid
+//<ABRIR>juan = 3 == 3<CERRAR> invalid
+//<ABRIR> juan = 3 < 3 <CERRAR> valid
+//<ABRIR> juan =3>3 <CERRAR> valid
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-int isValidExpression(char* input);
+int isValidExpression(char* input) {
+    char* validStart = "<ABRIR> ";
+    char* validEnd = " <CERRAR>";
+    char* operators[] = {"<", ">", "==", "!="};
+    char* variable
+    int i, j;
+    int len =strlen(input);
+
+    // Check if the input starts with "ABRIR "
+    if (strncmp(input, "<ABRIR> ", 8) != 0) {
+        //no es valido
+        return 0;
+    }
+
+    // Check if the input ends with " CERRAR"
+    if (strncmp(input + len - 9, " <CERRAR>", 9) != 0) {
+        //no es valido
+        return 0;
+    }
+
+
+    // Check relational operators
+    for (i = 0; i < 4; i++) {
+        char* opLocation = strstr(input, operators[i]);
+        if (opLocation != NULL) {
+            for (j = 0; j < 4; j++) {
+                if (i != j && strstr(input, operators[j]) != NULL) {
+                    return 0;
+                }
+            }
+            // Check if there is exactly one '=' before the operator
+            char* equalLocation = strchr(input + strlen(validStart), '=');
+            if (equalLocation == NULL || equalLocation >= opLocation) {
+                return 0;
+            }
+            // Check if there are numbers before and after the operator
+            char* numberStart = equalLocation + 1;
+            char* numberEnd = opLocation - 1;
+            while (numberStart <= numberEnd) {
+                if (*numberStart < '0' || *numberStart > '9') {
+                    return 0;
+                }
+                numberStart++;
+            }
+            numberStart = opLocation + strlen(operators[i]);
+            numberEnd = input + strlen(input) - strlen(validEnd) - 1;
+            while (numberStart <= numberEnd) {
+                if (*numberStart < '0' || *numberStart > '9') {
+                    return 0;
+                }
+                numberStart++;
+            }
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+void genfile(char* input) {
+    FILE *file = fopen("C:\\Users\\YourUsername\\Desktop\\output.txt", "w");
+    if (file != NULL) {
+        fputs(input, file);
+        fclose(file);
+    } else {
+        printf("Error opening file!\n");
+    }
+}
+
 int main() {
     char input[100];
     printf("Enter the expression: ");
@@ -13,72 +89,10 @@ int main() {
 
     if (isValidExpression(input)) {
         printf("Valid\n");
-
-        // Generate the lexemes file
-        FILE* file = fopen("C:/Users/andre/Documents/Visual Studio/Uru/C/text.txt", "w");
-        if (file != NULL) {
-            fprintf(file, "ABRIR\n");
-            char* expression = strtok(input + 6, " ");
-            while (expression != NULL) {
-                fprintf(file, "%s\n", expression);
-                expression = strtok(NULL, " ");
-            }
-            fprintf(file, "CERRAR\n");
-            fclose(file);
-        } else {
-            printf("Failed to generate  file\n");
-        }
+        genfile(input);
     } else {
         printf("Invalid\n");
     }
 
     return 0;
-}
-
-int isValidExpression(char* input) {
-    int len = strlen(input);
-    int i = 0;
-    int openCount = 0;
-    int closeCount = 0;
-    int operatorCount = 0;
-    int valid = 1;
-
-    // Check if the input starts with "ABRIR "
-    if (strncmp(input, "<ABRIR> ", 8) != 0) {
-        //no es valido
-        valid = 0;
-    }
-
-    // Check if the input ends with " CERRAR"
-    if (strncmp(input + len - 9, " <CERRAR>", 9) != 0) {
-        //no es valido
-        valid = 0;
-    }
-
-    char *invalidvariable = "+-*/^(){}[]<>=!&|~.,;: \t\n";
-
-    // Check if the input contains a valid  expression
-    char* expression = strtok(input + 8, "=");  
-    for (int i=0; i < strlen(expression); i++)
-    for(int j=0; j < strlen(invalidvariable); j++) 
-    if  (strcpmr(expression+i, invalidvariable +j )==  0){
-    valid=0;
-    }
-
-    expression = strtok(NULL, "<>")
-  
-
-    while (expression != NULL) {
-        if (strcmp(expression, "<") == 0 || strcmp(expression, ">") == 0 || strcmp(expression, "==") == 0 || strcmp(expression, "!=") == 0 || strcmp(expression, "+") == 0 || strcmp(expression, "-") == 0) {
-            operatorCount++;
-        } else {
-            if (atoi(expression) == 0 && strcmp(expression, "0") != 0) {
-                valid = 0;
-            }
-        }
-        expression = strtok(NULL, "<> ");
-    }
-
-
-    return valid;
 }
