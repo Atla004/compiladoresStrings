@@ -9,14 +9,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 int isValidExpression(char* input) {
     char* validStart = "<ABRIR> ";
     char* validEnd = " <CERRAR>";
     char* operators[] = {"<", ">", "==", "!="};
-    char* variable
-    int i, j;
-    int len =strlen(input);
+    char* variable= "abcdefghijklmnopqrstuvwxyz_";
+    int valid;
+    int count=0;
 
     // Check if the input starts with "ABRIR "
     if (strncmp(input, "<ABRIR> ", 8) != 0) {
@@ -25,48 +26,44 @@ int isValidExpression(char* input) {
     }
 
     // Check if the input ends with " CERRAR"
-    if (strncmp(input + len - 9, " <CERRAR>", 9) != 0) {
+    if (strncmp(input + strlen(input) - 9, " <CERRAR>", 9) != 0) {
         //no es valido
         return 0;
     }
 
 
-    // Check relational operators
-    for (i = 0; i < 4; i++) {
-        char* opLocation = strstr(input, operators[i]);
-        if (opLocation != NULL) {
-            for (j = 0; j < 4; j++) {
-                if (i != j && strstr(input, operators[j]) != NULL) {
-                    return 0;
+
+    //check first number
+    if (isdigit(input[count]) == 0)
+    {
+        printf("Invalid first number: %c \n",input[count-1]);
+        return 0;
+
+        for (int i = 8; i < strlen(input); i++)
+        {  
+            for (int j = 0; j < strlen(variable); j++)
+            {
+                if (input[i] == variable[j])
+                {
+                    printf("character: %c \n",variable[j]);
+                    valid=1;
+                    break;
                 }
+                valid=0;
             }
-            // Check if there is exactly one '=' before the operator
-            char* equalLocation = strchr(input + strlen(validStart), '=');
-            if (equalLocation == NULL || equalLocation >= opLocation) {
+            count = input[i];
+            if (valid==0 && input[i] != ' ' && input[i] != '=')
+            {
+                printf("Invalid variable character: %c \n",input[i]);
                 return 0;
             }
-            // Check if there are numbers before and after the operator
-            char* numberStart = equalLocation + 1;
-            char* numberEnd = opLocation - 1;
-            while (numberStart <= numberEnd) {
-                if (*numberStart < '0' || *numberStart > '9') {
-                    return 0;
-                }
-                numberStart++;
+            if (input[i] == ' ' || input[i] == '='){
+                valid=1;
+                count = i+1;
+                break;
             }
-            numberStart = opLocation + strlen(operators[i]);
-            numberEnd = input + strlen(input) - strlen(validEnd) - 1;
-            while (numberStart <= numberEnd) {
-                if (*numberStart < '0' || *numberStart > '9') {
-                    return 0;
-                }
-                numberStart++;
-            }
-            return 1;
         }
     }
-
-    return 0;
 }
 
 void genfile(char* input) {
