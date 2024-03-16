@@ -33,7 +33,7 @@ int isValidExpression(char* input) {
 
 
 
-    //check first number
+    //check variable
     if (isdigit(input[count]) == 0)
     {
         printf("Invalid first number: %c \n",input[count-1]);
