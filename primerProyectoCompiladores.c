@@ -23,12 +23,14 @@ int isValidExpression(char* input, char *operators, char **variable, char **numb
     // Check if the input starts with "ABRIR "
     if (strncmp(input, "<ABRIR> ", 8) != 0) {
         //no es valido
+        printf("el input no empieza con <ABRIR> \n");
         return 0;
     }
 
     // Check if the input ends with " CERRAR"
     if (strncmp(input + strlen(input) - 9, " <CERRAR>", 9) != 0) {
         //no es valido
+        printf("el input no termina con <CERRAR> \n");
         return 0;
     }
     count=8;
@@ -181,6 +183,28 @@ void genfile(char* input, char *operators, char **variable, char **number1, char
     fclose(file);
 }
 
+void performOperation(char *operator, char *number1, char *number2) {
+    int num1 = atoi(number1);
+    int num2 = atoi(number2);
+    int result;
+
+    if (strcmp(operator, "<") == 0) {
+        result = num1 < num2;
+    } else if (strcmp(operator, ">") == 0) {
+        result = num1 > num2;
+    } else if (strcmp(operator, "==") == 0) {
+        result = num1 == num2;
+    } else if (strcmp(operator, "!=") == 0) {
+        result = num1 != num2;
+    }
+
+    if (result) {
+        printf("Result: true\n");
+    } else {
+        printf("Result: false\n");
+    }
+}
+
 int main() {
     char input[100];
     char operators[3];
@@ -194,9 +218,11 @@ int main() {
     if (isValidExpression(input,operators,&variable, &number1, &number2)) {
         printf("Valid\n");
         genfile(input,operators,&variable, &number1, &number2);
+        performOperation(operators, number1, number2);
     } else {
         printf("Invalid\n");
     }
+
 
     return 0;
 }
