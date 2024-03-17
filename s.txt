@@ -1,0 +1,5 @@
+input: <ABRIR> sum=3>5 <CERRAR>
+variable: sum
+number1: 3
+number2: 5
+operator: >

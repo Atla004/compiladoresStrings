@@ -1,11 +1,4 @@
 
-//<ABRIR> juan = 3 == 3 <CERRAR> valid
-//<ABRIR> juan=3==3 <CERRAR> valid
-//<ABRIR>juan=3==3<CERRAR> invalid
-//<ABRIR>juan = 3 == 3<CERRAR> invalid
-//<ABRIR> juan = 3 < 3 <CERRAR> valid
-//<ABRIR> juan =3>3 <CERRAR> valid
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,41 +7,18 @@
 // Tu código aquí
 
 
-int isValidExpression(char* input);
-
-void saltarespacios(char* input, int* count);
-
-void genfile(char* input);
 
 
-int main() {
-    char input[100];
-    printf("Enter the expression: ");
-    fgets(input, sizeof(input), stdin);
-
-    // Remove the newline character from the input
-    input[strcspn(input, "\n")] = '\0';
-
-    if (isValidExpression(input)) {
-        printf("Valid\n");
-        genfile(input);
-    } else {
-        printf("Invalid\n");
-    }
-
-    return 0;
-}
-
-int isValidExpression(char* input) {
+int isValidExpression(char* input, char *operators, char **variable, char **number1, char **number2) {
     char* operatorscharacter[] = {"<", ">", "==", "!="};
     char* variablecharacter= "abcdefghijklmnopqrstuvwxyz_";
     char* numbercharacter= "0123456789";
-    char* variable;
-    char* number1;
-    char* number2;
-    char* character;
-    int valid;
+
+    int startvariable, startnumber1, startnumber2, valid;
     int count=0;
+    *variable = malloc(20 * sizeof(char));
+    *number1 = malloc(20 * sizeof(char));
+    *number2 = malloc(20 * sizeof(char));
 
     // Check if the input starts with "ABRIR "
     if (strncmp(input, "<ABRIR> ", 8) != 0) {
@@ -61,11 +31,12 @@ int isValidExpression(char* input) {
         //no es valido
         return 0;
     }
-
+    count=8;
+    saltarespacios(input, &count);
+    startvariable=count;
 
     //check variable
-
-    for (count = 8; count < strlen(input); count++){  
+    for (count; count < strlen(input); count++){  
         for (int j = 0; j < strlen(variablecharacter); j++){
             if (input[count] == variablecharacter[j]){
                 valid=1;
@@ -73,8 +44,6 @@ int isValidExpression(char* input) {
             }
             valid=0;
         }
-        //encontro caracter valido si salio por break
-        
         // si no es valido y el caracter no es espacio o igual retorna el error
         if (valid==0 && input[count] != ' ' && input[count] != '='){
             printf("Invalid variable character: %c \n",input[count]);
@@ -86,11 +55,14 @@ int isValidExpression(char* input) {
             break;
         }
     }
+    
+    strncpy((*variable), &input[startvariable], count-startvariable);
+    (*variable)[count-startvariable] = '\0';
 
     saltarespacios(input, &count);
 
-    //chekc if the next character is an equal sign
 
+    //chekc if the next character is an equal sign
     if (input[count] == '='){
         count++;
     }else{
@@ -99,13 +71,13 @@ int isValidExpression(char* input) {
     }
 
     saltarespacios(input, &count);
+
+
     //check first number
-
-
+    startnumber1=count;
     for (count ; count < strlen(input); count++){  
         for (int j = 0; j < strlen(numbercharacter); j++){
             if (input[count] == numbercharacter[j]){
-                
                 valid=1;
                 break;
             }
@@ -113,32 +85,38 @@ int isValidExpression(char* input) {
         }
         //encontro caracter valido si salio por break
         if (valid==0 ){
+            // guardando el numero
+            strncpy((*number1), &input[startnumber1], count-startnumber1);
+            (*number1)[count-startnumber1] = '\0';
             saltarespacios(input, &count);
 
-int a;
-a= (strncmp(input + count, operatorscharacter[2], 2));
-printf("a: %d\n",a);
-  
             if (strncmp(input + count, operatorscharacter[0], 1) == 0) {
-                //es ese operador y es valido >
-                printf("entro\n");
+                //es ese operador y es valido <
+                operators[0]='<';
+                operators[1]='\0';
                 count++;
                 valid=1;
                 break;
 
             }else if (strncmp(input + count, operatorscharacter[1], 1) == 0) {
-                //es ese operador y es valido <
+                //es ese operador y es valido >
+                operators[0]='>';
+                operators[1]='\0';
                 count++;
                 valid=1;
                 break;
             }else if (strncmp(input + count, operatorscharacter[2], 2) == 0) {
                 //es ese operador y es valido ==
+                strcpy(operators, "==");
+                operators[2]='\0';
                 count+=2;
 
                 valid=1;
                 break;
             }else if (strncmp(input + count, operatorscharacter[3], 2) == 0) {
                 //es ese operador y es valido !=
+                strcpy(operators, "!=");
+                operators[2]='\0';
                 count+=2;
                 valid=1;
                 break;
@@ -149,9 +127,12 @@ printf("a: %d\n",a);
         }
 
     }
+    
+
     saltarespacios(input, &count);
 
     //checks second number
+    startnumber2=count;
     for (count ; count < strlen(input); count++){  
         for (int j = 0; j < strlen(numbercharacter); j++){
             if (input[count] == numbercharacter[j]){
@@ -163,6 +144,8 @@ printf("a: %d\n",a);
         }
         //encontro caracter valido si salio por break
         if (valid==0 ){
+            strncpy((*number2), &input[startnumber2], count-startnumber2);
+            (*number2)[count-startnumber2] = '\0';
             saltarespacios(input, &count);
             if (strncmp(input + count,  "<CERRAR>", 8) == 0 ) {
                 //es ese operador y es valido >
@@ -183,12 +166,37 @@ void saltarespacios(char* input, int* count) {
     }
 }
 
-void genfile(char* input) {
-    FILE *file = fopen("C:/Users/andre/Documents/Visual Studio/Uru/C/output/output.txt", "w");
-    if (file != NULL) {
-        fputs(input, file);
-        fclose(file);
-    } else {
+void genfile(char* input, char *operators, char **variable, char **number1, char **number2) {
+    FILE *file = fopen("C:/Users/ATS/Documents/Visual studio/BASICO/C/C/s.txt", "w");
+    if (file == NULL) {
         printf("Error opening file!\n");
+        return ;
     }
+    fprintf(file,"input: %s\n", input);
+    fprintf(file, "variable: %s\n", *variable);
+    fprintf(file, "number1: %s\n", *number1);
+    fprintf(file, "number2: %s\n", *number2);
+    fprintf(file, "operator: %s\n", operators);
+
+    fclose(file);
+}
+
+int main() {
+    char input[100];
+    char operators[3];
+    char* variable,* number1,* number2;
+    printf("Enter the expression: ");
+    fgets(input, sizeof(input), stdin);
+
+    // Remove the newline character from the input
+    input[strcspn(input, "\n")] = '\0';
+
+    if (isValidExpression(input,operators,&variable, &number1, &number2)) {
+        printf("Valid\n");
+        genfile(input,operators,&variable, &number1, &number2);
+    } else {
+        printf("Invalid\n");
+    }
+
+    return 0;
 }
