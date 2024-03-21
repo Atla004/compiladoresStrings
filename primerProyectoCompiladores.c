@@ -4,7 +4,6 @@
 #include <string.h>
 #include <ctype.h>
 
-// Tu código aquí
 
 
 int isValidExpression(char* input, char *operators, char **variable, char **number1, char **number2) {
