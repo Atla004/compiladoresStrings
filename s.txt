@@ -1,5 +1,5 @@
-input: <ABRIR> sum=3>5 <CERRAR>
-variable: sum
-number1: 3
-number2: 5
-operator: >
+input: <ABRIR> variable = 5 < 3 <CERRAR>
+variable: variable
+number1: 5
+number2: 3
+operator: <

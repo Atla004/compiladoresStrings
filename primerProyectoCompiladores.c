@@ -4,7 +4,17 @@
 #include <string.h>
 #include <ctype.h>
 
+char* filenNAME = "C:/Users/ATS/Documents/Visual studio/BASICO/C/Compiladores/s.txt";
 
+// <ABRIR> variable = 5 < 3 <CERRAR>
+// <ABRIR> var{iable = 5 > 3 <CERRAR>
+
+void print_error_marker(int position) {
+    for (int i = 0; i < position + 22; i++) {
+        printf(" ");
+    }
+    printf("^\n");
+}
 
 int isValidExpression(char* input, char *operators, char **variable, char **number1, char **number2) {
     char* operatorscharacter[] = {"<", ">", "==", "!="};
@@ -20,6 +30,7 @@ int isValidExpression(char* input, char *operators, char **variable, char **numb
     // Check if the input starts with "ABRIR "
     if (strncmp(input, "<ABRIR> ", 8) != 0) {
         //no es valido
+        print_error_marker(count);
         printf("el input no empieza con <ABRIR> \n");
         return 0;
     }
@@ -27,6 +38,7 @@ int isValidExpression(char* input, char *operators, char **variable, char **numb
     // Check if the input ends with " CERRAR"
     if (strncmp(input + strlen(input) - 9, " <CERRAR>", 9) != 0) {
         //no es valido
+        print_error_marker(strlen(input) - 8);
         printf("el input no termina con <CERRAR> \n");
         return 0;
     }
@@ -45,6 +57,7 @@ int isValidExpression(char* input, char *operators, char **variable, char **numb
         }
         // si no es valido y el caracter no es espacio o igual retorna el error
         if (valid==0 && input[count] != ' ' && input[count] != '='){
+            print_error_marker(count);
             printf("Invalid variable character: %c \n",input[count]);
             return 0;
         }
@@ -65,6 +78,7 @@ int isValidExpression(char* input, char *operators, char **variable, char **numb
     if (input[count] == '='){
         count++;
     }else{
+        print_error_marker(count);
         printf("Invalid character: %c \n",input[count]);
         return 0;
     }
@@ -120,6 +134,7 @@ int isValidExpression(char* input, char *operators, char **variable, char **numb
                 valid=1;
                 break;
             }else{
+                print_error_marker(count);
                 printf("Invalid number character: %c \n",input[count]);
                 return 0;
             }
@@ -150,6 +165,7 @@ int isValidExpression(char* input, char *operators, char **variable, char **numb
                 //es ese operador y es valido >
                 return 1;
             }else{
+                print_error_marker(count);
                 printf("Invalid number character: %c \n",input[count]);
                 return 0;
             }
@@ -166,7 +182,7 @@ void saltarespacios(char* input, int* count) {
 }
 
 void genfile(char* input, char *operators, char **variable, char **number1, char **number2) {
-    FILE *file = fopen("C:/Users/ATS/Documents/Visual studio/BASICO/C/C/s.txt", "w");
+    FILE *file = fopen(filenNAME, "w");
     if (file == NULL) {
         printf("Error opening file!\n");
         return ;
