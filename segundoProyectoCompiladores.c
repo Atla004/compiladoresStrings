@@ -6,8 +6,11 @@
 
 char* filenNAME = "C:/Users/ATS/Documents/Visual studio/BASICO/C/Compiladores/s.txt";
 
+
 // <ABRIR> variable = 5 < 3 <CERRAR>
 // <ABRIR> var{iable = 5 > 3 <CERRAR>
+// <ABRIR> variable = 5 == 5 <CERRAR> 
+// <ABRIR> variable = 5 != 5 <CERRAR>
 
 void print_error_marker(int position) {
     for (int i = 0; i < position + 22; i++) {

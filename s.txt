@@ -1,5 +1,5 @@
-input: <ABRIR> variable = 5 < 3 <CERRAR>
+input: <ABRIR> variable = 5 != 5 <CERRAR>
 variable: variable
 number1: 5
-number2: 3
-operator: <
+number2: 5
+operator: !=
